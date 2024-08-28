@@ -1,0 +1,26 @@
+.highlight {
+  color: rgb(46, 46, 255);
+}
+
+/* Table.css */
+.action-button {
+  display: none;
+}
+
+.react-data-table__row:hover .action-button {
+  display: block;
+}
+
+.action-button button {
+  padding: 5px 10px;
+  background-color: #0796f50f;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  
+}
+
+.action-button button:hover {
+  background-color: #0056b3;
+}

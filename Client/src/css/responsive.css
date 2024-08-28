@@ -1,0 +1,58 @@
+@media only screen and (max-width: 600px) {
+  body {
+    background-color: rgb(39, 38, 38);
+  }
+
+  .logoName {
+    font-size: 1.2rem;
+  }
+
+  .infoBar li {
+    font-size: 0.6rem;
+  }
+
+  .advertise {
+    font-size: 0.8rem;
+  }
+
+  .heroSec {
+    padding: 0rem 1rem;
+  }
+
+  .heroSec h1 {
+    font-size: 1.5rem;
+  }
+
+  .heroSec p {
+    font-size: 1rem;
+  }
+
+  .topView {
+    flex-direction: column;
+    gap: 1em;
+    width: 100vw;
+  }
+
+  .topViewBox {
+    width: 90%;
+  }
+
+  .topViewBox h1 {
+    font-size: 1.5rem;
+  }
+
+  .table tr{
+    height: 0.8em;
+  }
+  .table td {
+    font-size: 0.9rem;
+    margin: 0rem;
+  }
+
+  .portfolioCryptoBox{
+    height: 25em;
+    background-color: aliceblue;
+    margin: 1em 0em;
+    font-size: 1rem;
+  }
+}
