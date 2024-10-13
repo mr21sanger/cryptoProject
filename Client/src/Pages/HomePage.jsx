@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../components/Navbar";
 import NavInfoBar from "../components/NavInfoBar";
 import { NavLink } from "react-router-dom";
 import TopInfoBox from "../components/TopInfoBox";
 import Table from "../components/Table";
 import { useHomeContext } from "../reducers/homeReducer";
+import Modal from "../components/Modal";
+import { useCryptoReducer } from "../reducers/cryptoReducer";
+import LoginCont from "../components/LoginCont";
 
 function HomePage() {
   const { isLoggedIn, user } = useHomeContext();
@@ -12,21 +15,22 @@ function HomePage() {
     {
       id: 0,
       heading: "Trending Coins",
+      
     },
     {
       id: 1,
-      heading: "Trending Coins",
+      heading: "Trending NFTs",
     },
     {
       id: 2,
-      heading: "Trending Coins",
+      heading: "Trending Categories",
     },
     // {
     //   id: 3,
     //   heading: "Trending Coins",
     // },
   ];
-
+  const { showModal, hideLoginModal } = useCryptoReducer();
   return (
     <>
       <div>
@@ -72,6 +76,9 @@ function HomePage() {
           </div>
 
           <Table />
+          {showModal && (
+            <Modal onclose={() => hideLoginModal()} children={<LoginCont />} />
+          )}
         </div>
       </div>
     </>

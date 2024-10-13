@@ -25,7 +25,7 @@ function PortfolioPage() {
         <div className="h-auto w-full md:p-5 p-2 md:grid grid-cols-2 gap-5">
           {portfolio &&
             portfolio.map((currElem) => {
-              return <PortfolioBox key={currElem} cryptoId={currElem} />;
+              return <PortfolioBox key={currElem} cryptoData={currElem} />;
             })}
         </div>
       </div>

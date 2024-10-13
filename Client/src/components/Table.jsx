@@ -6,8 +6,7 @@ import { FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 function Table() {
-  const { allCryptoData, portfolioEdit, portfolio, getPortfolio } =
-    useCryptoReducer();
+  const { allCryptoData, portfolioEdit, portfolio } = useCryptoReducer();
   const [portfolioState, setPortfolioState] = useState([]);
 
   useEffect(() => {
@@ -21,11 +20,17 @@ function Table() {
   };
 
   const checkPortfolioState = (val) => {
-    return portfolioState.includes(val) ? true : false;
+    return portfolioState?.some((currElem) => currElem?.id === val);
   };
 
-  const handlePortFolioClick = (val) => {
+  const handlePortFolioClick = (e, val) => {
+    // Prevent row click navigation
+    e.stopPropagation();
     portfolioEdit(val);
+    console.log(val);
+
+    console.log(checkPortfolioState(val));
+
     if (checkPortfolioState(val)) {
       setPortfolioState(portfolioState.filter((currElem) => currElem !== val));
     } else {
@@ -33,10 +38,12 @@ function Table() {
     }
   };
 
+  console.log(portfolioState);
+
   return (
     <>
       <div className="w-full my-12 overflow-x-auto">
-        <table className="m-auto my-2 w-[95%] ">
+        <table className="m-auto my-2 w-[95%]">
           <thead className="w-full bg-white h-8 text-black mx-auto">
             <tr className="">
               <th>sr.no.</th>
@@ -56,6 +63,7 @@ function Table() {
             {allCryptoData &&
               allCryptoData.map((currElem, i) => {
                 const isAdded = checkPortfolioState(currElem?.id);
+                console.log(isAdded);
                 return (
                   <tr
                     onClick={() => navigateToPage(currElem?.id)}
@@ -79,7 +87,9 @@ function Table() {
                     <td>{currElem?.market_cap}</td>
                     <td>{(currElem?.market_cap_change_24h).toFixed(3)}</td>
                     <td className="font-bold text-2xl">
-                      <button onClick={() => handlePortFolioClick(currElem.id)}>
+                      <button
+                        onClick={(e) => handlePortFolioClick(e, currElem)}
+                      >
                         {isAdded ? <FaStar /> : <CiStar />}
                       </button>
                     </td>

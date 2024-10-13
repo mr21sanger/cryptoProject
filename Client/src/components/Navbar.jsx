@@ -6,11 +6,13 @@ import Modal from "./Modal";
 import LoginCont from "./LoginCont";
 import { useHomeContext } from "../reducers/homeReducer";
 import { NavLink } from "react-router-dom";
+import ProfileSetting from "./ProfileSetting";
 function Navbar() {
   const [query, setQuery] = useState("");
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [showProfileSetting, setShowProfileSetting] = useState(false);
   const { isLoggedIn, user } = useHomeContext();
 
   const handleSubmit = (e) => {
@@ -30,6 +32,10 @@ function Navbar() {
     setShowOptions(!showOptions);
   };
 
+  const handleProfileClick = () => {
+    setShowProfileSetting(!showProfileSetting);
+  };
+
   useEffect(() => {
     if (isLoggedIn) {
       setShowLoginModal(false);
@@ -40,7 +46,10 @@ function Navbar() {
     <>
       <div className="w-full bg-black bg-opacity-85 h-[5em] py-2 border-b-2 hidden md:flex justify-evenly items-center">
         {/* LOGO */}
-        <NavLink to={"/"} className="w-[30%] text-white font-mono font-bold text-4xl text-center italic flex items-center logoName">
+        <NavLink
+          to={"/"}
+          className="w-[30%] text-white font-mono font-bold text-4xl text-center italic flex items-center logoName"
+        >
           CryptoStalker
         </NavLink>
 
@@ -84,11 +93,19 @@ function Navbar() {
         {isLoggedIn && (
           <div className="flex w-[20%] gap-5 justify-center items-center">
             <div>
-              <NavLink to={"/portfolio"} className="text-lg hover:underline underline-offset-4">
+              <NavLink
+                to={"/portfolio"}
+                className="text-lg hover:underline underline-offset-4"
+              >
                 Your Portfolio
               </NavLink>
             </div>
-            <NavLink className="text-lg hover:underline underline-offset-4">hii, {(user?.name)?.toUpperCase()}</NavLink>
+            <button
+              className="text-lg hover:underline underline-offset-4"
+              onClick={handleProfileClick}
+            >
+              hii, {user?.name?.toUpperCase()}
+            </button>
             <div>
               <img
                 className="w-14 h-14 rounded-full object-cover border-2"
@@ -177,6 +194,8 @@ function Navbar() {
           children={<LoginCont />}
         />
       )}
+
+      {showProfileSetting && <ProfileSetting close= {handleProfileClick}/>}
     </>
   );
 }

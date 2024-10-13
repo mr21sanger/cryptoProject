@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer } from "react";
 import axios from "axios";
+import { useCryptoReducer } from "./cryptoReducer";
 
 const homeReducer = createContext();
 
@@ -8,6 +9,7 @@ const initialState = {
   userData: [],
   isLoading: false,
 };
+
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -49,7 +51,6 @@ export const HomeProvider = ({ children }) => {
         const header = {
           Authorization: `Bearer ${token}`,
         };
-        console.log(header);
         axios
           .get("http://localhost:3000/api/getUser", { headers: header })
           .then((res) => {
@@ -95,7 +96,6 @@ export const HomeProvider = ({ children }) => {
         console.error("Axios error", e);
       });
   };
-
 
   return (
     <homeReducer.Provider

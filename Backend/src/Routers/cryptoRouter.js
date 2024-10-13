@@ -50,11 +50,25 @@ router.route("/search/info/:id").get(async (req, res) => {
   }
 });
 
+router.route("/trending").get(async (req, res) => {
+  console.log("hii");
+  try {
+    const trendingData = await axios.get(
+      "https://api.coingecko.com/api/v3/search/trending"
+    );
+    const { data } = trendingData;
+    return res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 router.route("/info/graph/:id/:days").get(async (req, res) => {
   const cryptoId = req.params.id;
   const days = req.params.days;
-  console.log(cryptoId, 1);
-  console.log(days, 2);
   try {
     const graphData = await axios.get(
       `https://api.coingecko.com/api/v3/coins/${cryptoId}/market_chart?vs_currency=usd&days=${days}`

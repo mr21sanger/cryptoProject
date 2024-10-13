@@ -11,7 +11,13 @@ function DetailGraphContainer({ graphData }) {
 
   const handleRangeClick = (range) => {
     setSelectedRange(range);
+    getGraphData(range, id);
   };
+
+  useEffect(() => {
+    getGraphData(7,id);
+  }, []);
+
   return (
     <div className="h-auto bg-black w-[50%] bg-opacity-90">
       <div className="h-16 mt-8 flex justify-evenly items-center">
@@ -25,9 +31,9 @@ function DetailGraphContainer({ graphData }) {
         </button>
         <button
           className={`py-2 px-5 ${
-            selectedRange === "30 " ? "bg-orange-600" : "bg-orange-800"
+            selectedRange === "30" ? "bg-orange-600" : "bg-orange-800"
           } text-black font-bold rounded hover:ring-1 hover:ring-white`}
-          onClick={() => handleRangeClick("30 ")}
+          onClick={() => handleRangeClick("30")}
         >
           30 days
         </button>
@@ -43,7 +49,11 @@ function DetailGraphContainer({ graphData }) {
 
       <div className="h-[35em]">
         {/* Add your graph rendering logic here based on selectedRange */}
-         {isLoading  ? "Loading" : <CryptoChart data={graphData?.prices}  days={selectedRange}/>}
+        {isLoading ? (
+          "Loading"
+        ) : (
+          <CryptoChart data={graphData?.prices} days={selectedRange} />
+        )}
       </div>
     </div>
   );

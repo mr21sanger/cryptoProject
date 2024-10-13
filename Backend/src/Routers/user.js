@@ -100,6 +100,8 @@ router.route("/login").post(async (req, res) => {
 
 router.route("/addToPortfolio").post(verifyToken, async (req, res) => {
   const { cryptoId } = req.body;
+  console.log("ii");
+  
   try {
     if (req.user) {
       const userId = req.user.user._id;
@@ -108,10 +110,13 @@ router.route("/addToPortfolio").post(verifyToken, async (req, res) => {
 
       if (!userPortfolio) {
         // If the user does not have a portfolio, create a new one
+        console.log("created")
         userPortfolio = new PortfolioModel({
           userId,
           portfolioItems: [cryptoId], // Initialize with the new cryptoId
         });
+        await userPortfolio.save()
+
       } else {
         const inPortfolio = await PortfolioModel.findOne({
           userId,

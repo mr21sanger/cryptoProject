@@ -16,14 +16,9 @@ function DetailPage() {
       setCryptoData(data);
     };
     fetchData();
-    console.log(id);
-    getGraphData(7, id);
   }, [id]);
 
-  if (!cryptoData || isLoading) {
-    return <div>Loading...</div>;
-  }
-
+  console.log(cryptoData);
   return (
     <>
       <div className="text-white w-full h-auto p-5">
@@ -33,7 +28,7 @@ function DetailPage() {
           {/* Corrected className */}
           <DetailContainer1 cryptoData={cryptoData || {}} />
           {/* <DetailGraphContainer /> */}
-          <DetailGraphContainer graphData = {graphData}/>
+          <DetailGraphContainer graphData={graphData} />
         </div>
 
         {/* Description container ************************* */}

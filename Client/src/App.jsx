@@ -16,18 +16,19 @@ function App() {
   const [backgroundColor, setBackgroundColor] = useState("");
 
   const { fetchUser } = useHomeContext();
-  const { fetchCryptos, getPortfolio } = useCryptoReducer();
+  const { fetchCryptos, getPortfolio, fetchTrending } = useCryptoReducer();
 
   useEffect(() => {
     fetchUser();
     fetchCryptos();
     getPortfolio();
+    fetchTrending();
   }, []);
 
   return (
     <>
       <Container className={`w-screen`} style={{}}>
-        <Navbar/>
+        <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/account" element={<SignUp />} />

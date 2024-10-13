@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 import axios from "axios";
 
 const cryptoContext = createContext();
@@ -10,6 +16,8 @@ const initialState = {
   portfolio: [],
   graphData: [],
   cryptoData: [],
+  showModal: false,
+  trendingData: [],
 };
 
 const reducer = (state, action) => {
@@ -47,6 +55,26 @@ const reducer = (state, action) => {
         cryptoData: action.payload,
       };
 
+    case "Set_Trending":
+      return {
+        ...state,
+        isLoading: false,
+        trendingData: action.payload,
+      };
+
+    case "Show_Login_Modal":
+      return {
+        ...state,
+        isLoading: false,
+        showModal: true,
+      };
+    case "Hide_Login_Modal":
+      return {
+        ...state,
+        isLoading: false,
+        showModal: false,
+      };
+
     default:
       return state;
   }
@@ -70,6 +98,7 @@ export const CryptoProvider = ({ children }) => {
   };
 
   const portfolioEdit = (val) => {
+    console.log(val, token);
     const data = {
       cryptoId: val,
     };
@@ -82,10 +111,16 @@ export const CryptoProvider = ({ children }) => {
       })
       .then((res) => {
         if (res.data?.success === true) {
+          console.log(res);
           dispatch({ type: "PortFolioAdd", payload: res?.data });
         }
       })
-      .catch((e) => console.log("Axios error", e));
+      .catch((e) => {
+        console.log("Axios error", e);
+        if (e?.response.status === 401) {
+          showLoginModal();
+        }
+      });
   };
 
   const getPortfolio = () => {
@@ -112,30 +147,49 @@ export const CryptoProvider = ({ children }) => {
       return response?.data?.data; // Return the relevant data directly
     } catch (error) {
       console.error("Axios Error", error);
-      return null; // Return null or handle the error as needed
+      return null;
     }
   };
-  const getGraphData = (days = 7, id) => {
-    // setTimeout(() => {
-    // }, 3000);
+
+  const getGraphData = useCallback((days = 7, id) => {
     dispatch({ type: "Loading" });
-    console.log(id);
-    console.log("hii");
-    
-
-    try {
-      axios
-        .get(`http://localhost:3000/api/cryptos/info/graph/${id}/${days}`)
-        .then((res) => {
-          dispatch({ type: "Set_Graph_Data", payload: res.data.data });
-          console.log(res.data);
-        })
-        .catch((e) => console.log(e));
-    } catch (error) {
-      console.log(error);
+    const cacheKey = `graphData_${id}_${days}`;
+    const cachedData = localStorage.getItem(cacheKey);
+    if (cachedData) {
+      const parsedData = JSON.parse(cachedData);
+      dispatch({ type: "Set_Graph_Data", payload: parsedData });
+      return;
     }
+    axios
+      .get(`http://localhost:3000/api/cryptos/info/graph/${id}/${days}`)
+      .then((res) => {
+        dispatch({ type: "Set_Graph_Data", payload: res.data.data });
+        localStorage.setItem(cacheKey, JSON.stringify(res.data.data));
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
+
+  //FETCHING TRENDING DATA***********************
+  const fetchTrending = () => {
+    dispatch({ type: "Loading" });
+    axios
+      .get("http://localhost:3000/api/cryptos/trending")
+      .then((res) => {
+        dispatch({ type: "Set_Trending", payload: res?.data?.data });
+      })
+      .catch((e) => console.log(e));
   };
 
+  // SHOW LOGIN MODAL TO THE UNAUTHORIZE PERSON
+  const showLoginModal = () => {
+    dispatch({ type: "Show_Login_Modal" });
+  };
+  //HIDE LOGIN MODAL AFTER CLICKING CLOSE BUTTON
+  const hideLoginModal = () => {
+    dispatch({ type: "Hide_Login_Modal" });
+  };
   return (
     <cryptoContext.Provider
       value={{
@@ -145,6 +199,8 @@ export const CryptoProvider = ({ children }) => {
         getPortfolio,
         getGraphData,
         getCryptoData,
+        hideLoginModal,
+        fetchTrending,
       }}
     >
       {children}
