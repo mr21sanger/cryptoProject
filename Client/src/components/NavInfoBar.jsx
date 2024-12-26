@@ -8,19 +8,20 @@ function NavInfoBar() {
           <ul className="flex justify-evenly h-full items-center text-lg font-light">
             <li>
               Active Cryptos :{" "}
-              <span className="font-medium  highlight">495</span>
+              <span className="font-medium  highlight">2.4m+</span>
             </li>
             <li>
-              Active Cryptos :{" "}
-              <span className="font-medium highlight">495</span>
+              Exchanges :{" "}
+              <span className="font-medium highlight">764
+              </span>
             </li>
             <li>
-              Active Cryptos :{" "}
-              <span className="font-medium highlight">495</span>
+              Market Cap :{" "}
+              <span className="font-medium highlight">$3.6T+</span>
             </li>
             <li>
-              Active Cryptos :{" "}
-              <span className="font-medium highlight">495</span>
+              24h Vol:{" "}
+              <span className="font-medium highlight">$319.32B+</span>
             </li>
           </ul>
         </div>

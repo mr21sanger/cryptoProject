@@ -3,8 +3,8 @@ import { RxCross2 } from "react-icons/rx";
 
 function Modal({ children, onclose }) {
   return (
-    <div className="fixed inset-0 bg-black  bg-opacity-15 backdrop-blur-sm flex justify-center items-center">
-      <div className="flex flex-col gap-2 text-white">
+    <div className="fixed inset-0 z-50 bg-black   bg-opacity-15 backdrop-blur-sm flex justify-center items-center">
+      <div className="flex flex-col gap-2 text-white scale-in-ver-center scale-out-vertica">
         <button
           onClick={onclose}
           className="text-4xl hover:bg-white hover:text-black rounded-full h-12 w-12 justify-center flex items-center transition-colors duration-300"

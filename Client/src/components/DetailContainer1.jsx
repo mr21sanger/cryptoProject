@@ -56,29 +56,29 @@ function DetailContainer1({ cryptoData }) {
 
         {/* Other details block */}
         <h1 className="text-2xl px-5 my-5">Market Stats</h1>
-        <div className="my-5 w-full h-[13em] grid grid-cols-3 gap-5 items-center">
+        <div className="my-5 w-full h-[13em] grid grid-cols-3 gap-5 items-center bg-neutral-900 rounded-lg bg-opacity-55 border border-neutral-800">
           <div className="text-center">
-            <h4 className="text-gray-50 text-xl font-medium">Market Cap</h4>
+            <h4 className="text-gray-400 text-xl font-medium">Market Cap</h4>
             <p>{market_cap?.usd?.toLocaleString()}</p>
           </div>
           <div className="text-center">
-            <h4 className="text-gray-50 text-xl font-medium">High (24h)</h4>
+            <h4 className="text-gray-400 text-xl font-medium">High (24h)</h4>
             <p>{high_24h?.usd?.toLocaleString()}</p>
           </div>
           <div className="text-center">
-            <h4 className="text-gray-50 text-xl font-medium">Low (24h)</h4>
+            <h4 className="text-gray-400 text-xl font-medium">Low (24h)</h4>
             <p>{low_24h?.usd?.toLocaleString()}</p>
           </div>
           <div className="text-center">
-            <h4 className="text-gray-50 text-xl font-medium">Max Supply</h4>
+            <h4 className="text-gray-400 text-xl font-medium">Max Supply</h4>
             <p>{max_supply?.toLocaleString()}</p>
           </div>
           <div className="text-center">
-            <h4 className="text-gray-50 text-xl font-medium">Total Volume</h4>
+            <h4 className="text-gray-400 text-xl font-medium">Total Volume</h4>
             <p>{total_volume?.usd?.toLocaleString()}</p>
           </div>
           <div className="text-center">
-            <h4 className="text-gray-50 text-xl font-medium">Total Supply</h4>
+            <h4 className="text-gray-400 text-xl font-medium">Total Supply</h4>
             <p>{total_supply?.toLocaleString()}</p>
           </div>
         </div>

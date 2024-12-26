@@ -28,7 +28,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-
+    img: {
+      type: String,
+      default: "https://randomuser.me/api/portraits/lego/5.jpg", // Replace with your demo link
+    },
     password: {
       type: String,
       required: true,

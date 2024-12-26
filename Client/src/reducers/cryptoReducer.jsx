@@ -18,6 +18,7 @@ const initialState = {
   cryptoData: [],
   showModal: false,
   trendingData: [],
+  newsData: [],
 };
 
 const reducer = (state, action) => {
@@ -60,6 +61,13 @@ const reducer = (state, action) => {
         ...state,
         isLoading: false,
         trendingData: action.payload,
+      };
+
+    case "Set_News":
+      return {
+        ...state,
+        isLoading: false,
+        newsData: action.payload,
       };
 
     case "Show_Login_Modal":
@@ -111,7 +119,7 @@ export const CryptoProvider = ({ children }) => {
       })
       .then((res) => {
         if (res.data?.success === true) {
-          console.log(res);
+          console.log(res, "portfolio res");
           dispatch({ type: "PortFolioAdd", payload: res?.data });
         }
       })
@@ -177,9 +185,21 @@ export const CryptoProvider = ({ children }) => {
     axios
       .get("http://localhost:3000/api/cryptos/trending")
       .then((res) => {
+        console.log(res);
         dispatch({ type: "Set_Trending", payload: res?.data?.data });
       })
-      .catch((e) => console.log(e));
+      .catch((e) => console.log(e, "trending data"));
+  };
+
+  //FETCHING THE NEWS OF CRYPTOCURRENCY
+  const fetchNews = () => {
+    dispatch({ type: "Loading" });
+    axios
+      .get("http://localhost:3000/api/cryptos/info/cryptoNews")
+      .then((res) => {
+        dispatch({ type: "Set_News", payload: res?.data?.data });
+      })
+      .catch((error) => console.log("Axios error news", error));
   };
 
   // SHOW LOGIN MODAL TO THE UNAUTHORIZE PERSON
@@ -201,6 +221,7 @@ export const CryptoProvider = ({ children }) => {
         getCryptoData,
         hideLoginModal,
         fetchTrending,
+        fetchNews,
       }}
     >
       {children}

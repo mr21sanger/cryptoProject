@@ -6,10 +6,9 @@ const homeReducer = createContext();
 
 const initialState = {
   isLoggedIn: false,
-  userData: [],
+  user: [],
   isLoading: false,
 };
-
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -41,6 +40,7 @@ const reducer = (state, action) => {
 
 export const HomeProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
+
 
   // FETCH THE USER*********************
 
@@ -97,9 +97,35 @@ export const HomeProvider = ({ children }) => {
       });
   };
 
+  // EDIT PROFILE *************************
+  const editProfile = (data) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const headers = {
+          Authorization: `Bearer ${token}`,
+        };
+        axios
+          .post("http://localhost:3000/api/editUser", data, {headers})
+          .then((res) => {
+            if (res.status === 200) {
+              dispatch({type: "setUserData", payload: res?.data?.user})
+              navigate("/", { replace: true }); // Redirect to home page
+              window.location.reload();
+            }
+          })
+          .catch((e) => {
+            console.error("Axios error", e);
+          });
+      } catch (error) {
+        console.error("error", error);
+      }
+    }
+  };
+
   return (
     <homeReducer.Provider
-      value={{ ...state, loginUser, createUser, fetchUser }}
+      value={{ ...state, loginUser, createUser, fetchUser, editProfile }}
     >
       {children}
     </homeReducer.Provider>

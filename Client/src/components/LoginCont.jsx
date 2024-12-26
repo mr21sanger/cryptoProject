@@ -6,9 +6,9 @@ function LoginCont() {
   const [activeButton, setActiveButton] = useState("login");
 
   return (
-    <div className="w-full h-full rounded-xl">
+    <div className="w-full h-full rounded-xl z-50 ">
       {/* LOGIN/SIGNUP FORMS BUTTON */}
-      <div className="w-full flex  justify-evenly items-center h-[10vh] lead">
+      <div className="w-full flex  justify-evenly items-center h-[10vh] lead z-50">
         <button
           className={`font-semibold text-2xl ${
             activeButton === "login" ? "border-b-4 border-white" : ""

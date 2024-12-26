@@ -1,6 +1,7 @@
 @media only screen and (max-width: 600px) {
   body {
-    background-color: rgb(39, 38, 38);
+    /* background-color: rgb(39, 38, 38); */
+    background-size: 200%;
   }
 
   .logoName {
@@ -29,12 +30,13 @@
 
   .topView {
     flex-direction: column;
-    gap: 1em;
+
     width: 100vw;
   }
 
   .topViewBox {
-    width: 90%;
+    width: 93%;
+    margin-top: 1em;
   }
 
   .topViewBox h1 {

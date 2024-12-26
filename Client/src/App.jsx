@@ -16,13 +16,14 @@ function App() {
   const [backgroundColor, setBackgroundColor] = useState("");
 
   const { fetchUser } = useHomeContext();
-  const { fetchCryptos, getPortfolio, fetchTrending } = useCryptoReducer();
+  const { fetchCryptos, getPortfolio, fetchTrending,fetchNews } = useCryptoReducer();
 
   useEffect(() => {
     fetchUser();
     fetchCryptos();
     getPortfolio();
     fetchTrending();
+    fetchNews()
   }, []);
 
   return (

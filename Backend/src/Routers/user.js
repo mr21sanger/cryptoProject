@@ -29,7 +29,6 @@ router.route("/createUser").post(async (req, res) => {
       cPassword,
     });
     const userData = await data.save();
-    console.log(process.env.TZ);
 
     jwt.sign({ userData }, SECRET_KEY, { expiresIn: "300s" }, (err, token) => {
       if (err) {
@@ -63,6 +62,7 @@ router.route("/login").post(async (req, res) => {
         .status(404)
         .json({ success: false, error: "Please Provide credentials" });
     }
+
     let user = await UserModel.findOne({ email });
     if (!user) {
       return res.status(404).json({ success: false, error: "Email not found" });
@@ -78,10 +78,13 @@ router.route("/login").post(async (req, res) => {
             error: "Token generation failed",
           });
         } else {
+          // Exclude password before sending the user data
+          const { password, ...userWithoutPassword } = user.toObject();
+
           return res.status(200).json({
             success: true,
             token,
-            data: user,
+            data: userWithoutPassword,
           });
         }
       });
@@ -93,6 +96,10 @@ router.route("/login").post(async (req, res) => {
     }
   } catch (error) {
     console.error(error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal Server Error",
+    });
   }
 });
 
@@ -100,23 +107,19 @@ router.route("/login").post(async (req, res) => {
 
 router.route("/addToPortfolio").post(verifyToken, async (req, res) => {
   const { cryptoId } = req.body;
-  console.log("ii");
-  
+
   try {
     if (req.user) {
       const userId = req.user.user._id;
       let userPortfolio = await PortfolioModel.findOne({ userId });
-      console.log(userPortfolio);
 
       if (!userPortfolio) {
         // If the user does not have a portfolio, create a new one
-        console.log("created")
         userPortfolio = new PortfolioModel({
           userId,
           portfolioItems: [cryptoId], // Initialize with the new cryptoId
         });
-        await userPortfolio.save()
-
+        await userPortfolio.save();
       } else {
         const inPortfolio = await PortfolioModel.findOne({
           userId,
@@ -181,10 +184,58 @@ router.route("/getPortfolio").get(verifyToken, async (req, res) => {
 router.route("/getUser").get(verifyToken, async (req, res) => {
   try {
     const user = req.user;
+    console.log("hii")
+    console.log(user," user .........")
     return res.status(200).send(user);
   } catch (error) {
     return res.status(500).send({ error });
   }
+});
+
+//EDIT PROFILE
+router.route("/editUser").post(verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.user._id;
+    const { name, email, img } = req.body;
+
+    if (!name && !email && !img) {
+      return res.status(400).json({ error: "No data provided to update." });
+    }
+
+    // Update user details in the database
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        ...(name && { name }),
+        ...(email && { email }),
+        ...(img && { img }),
+      },
+      { new: true } // Return the updated document
+    );
+
+    updatedUser.save()
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    res
+      .status(200)
+      .json({ message: "User updated successfully.", user: updatedUser });
+  } catch (error) {
+    console.error("Error updating user:", error);
+    res.status(500).json({ error: "An internal server error occurred." });
+  }
+});
+
+//LOGOUT FUNCTION
+router.post("/logout", (req, res) => {
+  res.clearCookie("authToken", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+  });
+  res.status(200).json({ message: "Logged out successfully" });
 });
 
 module.exports = router;

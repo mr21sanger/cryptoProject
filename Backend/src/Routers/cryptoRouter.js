@@ -34,7 +34,6 @@ router.route("/info").get(async (req, res) => {
 
 router.route("/search/info/:id").get(async (req, res) => {
   const searchCrypto = req.params.id;
-  console.log(searchCrypto);
 
   try {
     const crypto = await axios.get(
@@ -51,7 +50,6 @@ router.route("/search/info/:id").get(async (req, res) => {
 });
 
 router.route("/trending").get(async (req, res) => {
-  console.log("hii");
   try {
     const trendingData = await axios.get(
       "https://api.coingecko.com/api/v3/search/trending"
@@ -73,11 +71,23 @@ router.route("/info/graph/:id/:days").get(async (req, res) => {
     const graphData = await axios.get(
       `https://api.coingecko.com/api/v3/coins/${cryptoId}/market_chart?vs_currency=usd&days=${days}`
     );
-    console.log(graphData.data);
     return res.status(200).json({ success: true, data: graphData.data });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, error });
+  }
+});
+
+//NEWS OF CRYPTO CURRENCY
+router.route("/info/cryptoNews").get(async (req, res) => {
+  try {
+    const url =
+      "https://min-api.cryptocompare.com/data/v2/news/?categories=BTC,ETH,regulation&extraParams=YourSite";
+    const data = await axios.get(url);
+    const newsData = data.data
+    return res.status(200).json({success: true, data: newsData})
+  } catch (error) {
+    console.log("news error", error);
   }
 });
 

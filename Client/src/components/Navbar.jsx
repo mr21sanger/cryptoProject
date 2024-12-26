@@ -5,8 +5,10 @@ import { FaBars } from "react-icons/fa";
 import Modal from "./Modal";
 import LoginCont from "./LoginCont";
 import { useHomeContext } from "../reducers/homeReducer";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import ProfileSetting from "./ProfileSetting";
+import { useCryptoReducer } from "../reducers/cryptoReducer";
+
 function Navbar() {
   const [query, setQuery] = useState("");
   const [showSearchBox, setShowSearchBox] = useState(false);
@@ -14,12 +16,28 @@ function Navbar() {
   const [showOptions, setShowOptions] = useState(false);
   const [showProfileSetting, setShowProfileSetting] = useState(false);
   const { isLoggedIn, user } = useHomeContext();
+  const { showModal, hideLoginModal } = useCryptoReducer();
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
   };
 
-  // BUTTON CLICK
+  const handleSearchFocus = () => {
+    setShowSearchBox(true);
+  };
+
+  const handleSearchBlur = (e) => {
+    // Prevent hiding when clicking on the search button
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setShowSearchBox(false);
+    }
+  };
+
   const handleClick = () => {
     setShowSearchBox(!showSearchBox);
   };
@@ -37,40 +55,68 @@ function Navbar() {
   };
 
   useEffect(() => {
+    setShowLoginModal(showModal);
+  }, [showModal]);
+
+  const closeModal = () => {
+    hideLoginModal();
+    setShowLoginModal(false);
+  };
+
+  useEffect(() => {
     if (isLoggedIn) {
       setShowLoginModal(false);
     }
   }, [isLoggedIn]);
 
+  const handleSearch = (val) => {
+    setQuery(val);
+  };
+
   return (
     <>
-      <div className="w-full bg-black bg-opacity-85 h-[5em] py-2 border-b-2 hidden md:flex justify-evenly items-center">
+      <div className="w-full bg-black bg-opacity-85 h-[5em] py-2 border-b-2 hidden md:flex justify-around items-center">
         {/* LOGO */}
         <NavLink
           to={"/"}
-          className="w-[30%] text-white font-mono font-bold text-4xl text-center italic flex items-center logoName"
+          className="w-[15%] text-white font-mono font-bold text-4xl text-center italic flex items-center logoName"
         >
-          CryptoStalker
+          <img
+            src="src/background/Untitled_design-removebg-preview.png"
+            alt=""
+            className="h-16 mt-"
+          />
         </NavLink>
 
         {/* SEARCHBAR */}
-        <div className="w-[40%]  gap-5">
+        <div
+          className="w-[30%] bg-whit gap-5 relative"
+          onBlur={handleSearchBlur}
+        >
           <form
             onSubmit={handleSubmit}
-            className="w-full flex items-center justify-center gap-2 h-full"
+            className="w-full bg-red-0 flex items-center justify-start gap-2 h-full transition-all duration-300"
           >
             <input
               type="search"
               name="search"
               id="search"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="bg-white bg-opacity-30 w-[80%] h-[2.6em] rounded hover:ring-2 hover:ring-white p-5 text-lg font-semibold"
+              onChange={(e) => handleSearch(e.target.value)}
+              onFocus={handleSearchFocus}
+              className={`bg-neutral-400 bg-opacity-30 h-[1.5em] rounded p-5 text-lg font-semibold transition-all duration-300 ${
+                showSearchBox ? "w-[78%] rounded-r-none" : "w-[70%]"
+              }`}
               placeholder="Search here..."
             />
             <button
               type="submit"
-              className="bg-white hover:bg-gray-200 text-black font-bold text-xl py-2 px-4 rounded"
+              className={`bg-white text-black font-bold text-xl py-1.5 px-6 rounded rounded-l-none transition-all duration-300 absolute right-0 transform ${
+                !showSearchBox
+                  ? "translate-x-full opacity-0"
+                  : "translate-x-0 opacity-100"
+              }`}
+              onClick={() => navigate(`/detail/${query}`)}
             >
               Search
             </button>
@@ -91,7 +137,7 @@ function Navbar() {
 
         {/* PROFILE SECTION */}
         {isLoggedIn && (
-          <div className="flex w-[20%] gap-5 justify-center items-center">
+          <div className="flex w-[30%] gap-5 justify-end items-center">
             <div>
               <NavLink
                 to={"/portfolio"}
@@ -109,7 +155,7 @@ function Navbar() {
             <div>
               <img
                 className="w-14 h-14 rounded-full object-cover border-2"
-                src="https://www.wrestlinginc.com/img/gallery/bully-ray-lays-out-how-the-bloodline-must-respond-to-roman-reigns-return-to-wwe/intro-1723042647.jpg"
+                src={user?.img}
                 alt="Rounded avatar"
               />
             </div>
@@ -117,8 +163,6 @@ function Navbar() {
         )}
       </div>
 
-      {/* ********************************************************************************** */}
-      {/* RESPONSIVE NAVBAR 2 */}
       <div className="w-full h-auto py-2 border-b-2 px-3 transition-all duration-300 md:hidden">
         <div className="w-full flex justify-between ">
           {/* LOGO */}
@@ -195,7 +239,7 @@ function Navbar() {
         />
       )}
 
-      {showProfileSetting && <ProfileSetting close= {handleProfileClick}/>}
+      {showProfileSetting && <ProfileSetting close={handleProfileClick} />}
     </>
   );
 }
