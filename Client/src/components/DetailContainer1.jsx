@@ -29,7 +29,7 @@ function DetailContainer1({ cryptoData }) {
 
   return (
     <>
-      <div className="w-[50%] h-auto border-gray-950 py-5 bg-black bg-opacity-55">
+      <div className="md:w-[50%] h-auto border-gray-950 py-5 bg-black bg-opacity-55">
         {/* INFO BLOCK */}
         <div className="flex items-center gap-3 h-[5em] w-full px-5">
           <img

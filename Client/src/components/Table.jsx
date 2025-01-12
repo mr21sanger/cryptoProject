@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useCryptoReducer } from "../reducers/cryptoReducer";
-import { shortName } from "../Pages/Logix";
+import { formatNumber, shortName } from "../Pages/Logix";
 import { CiStar } from "react-icons/ci";
 import { FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -10,20 +10,24 @@ function Table() {
   const { allCryptoData, portfolioEdit, portfolio } = useCryptoReducer();
   const [portfolioState, setPortfolioState] = useState([]);
   const [previousPrices, setPreviousPrices] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage] = useState(10); // Customize rows per page
   const { isLoggedIn } = useHomeContext();
   const navigate = useNavigate();
 
+  // Update portfolio state on portfolio change
   useEffect(() => {
     setPortfolioState(portfolio);
   }, [portfolio]);
 
+  // Initialize previous prices
   useEffect(() => {
     if (allCryptoData) {
       setPreviousPrices((prev) => {
         const updatedPrices = { ...prev };
         allCryptoData.forEach((crypto) => {
           if (!updatedPrices[crypto.id]) {
-            // Only initialize if not already tracked
             updatedPrices[crypto.id] = crypto.current_price;
           }
         });
@@ -32,105 +36,222 @@ function Table() {
     }
   }, [allCryptoData]);
 
+  // Update previous prices on price changes
   const updatePreviousPrices = () => {
     setPreviousPrices((prev) => {
       const updatedPrices = { ...prev };
       allCryptoData.forEach((crypto) => {
-        updatedPrices[crypto.id] = crypto.current_price; // Update to latest price
+        updatedPrices[crypto.id] = crypto.current_price;
       });
       return updatedPrices;
     });
   };
 
-  const navigateToPage = (id) => {
-    navigate(`/detail/${id}`);
-  };
-
-  const checkPortfolioState = (val) => {
-    return portfolioState?.some((currElem) => currElem?.id === val);
-  };
+  // Handle portfolio actions
+  const checkPortfolioState = (val) =>
+    portfolioState?.some((currElem) => currElem?.id === val);
 
   const handlePortFolioClick = (e, val) => {
     e.stopPropagation();
     portfolioEdit(val);
 
     if (checkPortfolioState(val)) {
-      setPortfolioState(portfolioState.filter((currElem) => currElem !== val));
+      setPortfolioState(
+        portfolioState.filter((currElem) => currElem.id !== val)
+      );
     } else {
       setPortfolioState([...portfolioState, val]);
     }
   };
 
-  useEffect(() => {
-    // Update previous prices only after rendering
-    const timer = setTimeout(updatePreviousPrices, 0);
-    return () => clearTimeout(timer); // Cleanup timer
-  }, [allCryptoData]);
+  // Filter and paginate data
+  const filteredData = useMemo(() => {
+    return allCryptoData?.filter((crypto) =>
+      crypto.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [allCryptoData, searchTerm]);
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    return filteredData?.slice(startIndex, startIndex + rowsPerPage);
+  }, [filteredData, currentPage, rowsPerPage]);
 
   return (
-    <>
-      <div className="w-full my-12 overflow-x-auto">
-        <table className="m-auto my-2 w-[95%]">
-          <thead className="w-full bg-white h-8 text-black mx-auto">
-            <tr>
-              <th>sr.no.</th>
-              <th>Crypto</th>
-              <th>Symbol</th>
-              <th>Current Price</th>
-              <th>Price Change (24h)</th>
-              <th>High (24h)</th>
-              <th>Low (24h)</th>
-              <th>Market Cap</th>
-              <th>Market Cap Change (24h)</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody className="text-center">
-            {allCryptoData &&
-              allCryptoData.map((currElem, i) => {
-                const isAdded = checkPortfolioState(currElem?.id);
-                const prevPrice = previousPrices[currElem?.id] || currElem?.current_price;
-                const priceChangeDirection =
-                  currElem?.current_price > prevPrice ? "text-green-500" : currElem?.current_price < prevPrice ?  "text-red-500" : "text-white";
+    <div className="w-full my-12 overflow-x-auto">
+      <div className="flex justify-between items-center w-[95%] mx-auto mb-4 px-4">
+        <input
+          type="text"
+          placeholder="Search Cryptocurrency"
+          className="w-full max-w-md px-4 py-2 rounded-xl border  bg-neutral-800 text-gray-200 placeholder-gray-400 text-lg shadow-lg focus:outline-none focus:border-orange-400 transition duration-300"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
 
-                return (
-                  <tr
-                    onClick={() => navigateToPage(currElem?.id)}
-                    key={currElem?.id}
-                    className="h-16 bg-neutral-900 bg-opacity-55 hover:bg-opacity-80 border-b hover:bg-neutral-800 transition-all duration-300 "
-                  >
-                    <td>{i + 1}</td>
-                    <td className="gap-5 items-center my-2 px-2">
-                      <div className="flex justify-start items-center gap-2 h-full my-2">
-                        <img
-                          className="w-12 h-12 rounded-full object-cover border-2"
-                          src={currElem.image}
-                          alt="Rounded avatar"
-                        />
-                        <p className="w-20">{shortName(currElem?.name, 8)}</p>
-                      </div>
-                    </td>
-                    <td>{currElem?.symbol}</td>
-                    <td className={`${priceChangeDirection}`}>
-                      {(currElem?.current_price).toFixed(3)}
-                    </td>
-                    <td>{(currElem?.price_change_24h).toFixed(3)}</td>
-                    <td>{(currElem?.high_24h).toFixed(3)}</td>
-                    <td>{(currElem?.low_24h).toFixed(3)}</td>
-                    <td>{currElem?.market_cap}</td>
-                    <td>{(currElem?.market_cap_change_24h).toFixed(3)}</td>
-                    <td className="font-bold text-2xl">
-                      <button onClick={(e) => handlePortFolioClick(e, currElem)}>
-                        {isAdded && isLoggedIn ? <FaStar /> : <CiStar />}
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
+        <p className="text-white">Page: {currentPage}</p>
       </div>
-    </>
+
+      <table className="m-auto my-2 w-[95%] rounded-xl border-collapse p-5 overflow-hidden ">
+        <thead className="bg-orange-500 text-gray-200 bg-opacity-85 h-8">
+          <tr>
+            <th className="rounded-tl-lg">#</th>
+            <th>Crypto</th>
+            <th>Symbol</th>
+            <th>Current Price</th>
+            <th>Price Change (24h)</th>
+            <th>High (24h)</th>
+            <th>Low (24h)</th>
+            <th>Market Cap</th>
+            <th>Volume</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {paginatedData?.map((crypto, index) => {
+            const isAdded = checkPortfolioState(crypto?.id);
+            const prevPrice =
+              previousPrices[crypto?.id] || crypto?.current_price;
+            const priceChangeDirection =
+              crypto?.current_price > prevPrice
+                ? "text-green-500"
+                : crypto?.current_price < prevPrice
+                ? "text-red-500"
+                : "";
+
+            return (
+              <tr
+                key={crypto?.id}
+                onClick={() => navigate(`/detail/${crypto?.id}`)}
+                className="hover:bg-neutral-900
+                h-16 transition duration-200 text-center bg-neutral-950 text-gray-100 text-lg"
+              >
+                <td>{(currentPage - 1) * rowsPerPage + index + 1}</td>
+                <td className="flex items-center justify-start gap-2 h-16 px-2">
+                  <img
+                    className="w-10 h-10 rounded-full"
+                    src={crypto?.image}
+                    alt={crypto?.name}
+                  />
+                  {shortName(crypto?.name, 10)}
+                </td>
+                <td>{crypto?.symbol}</td>
+                <td
+                  className={`${
+                    crypto?.current_price > prevPrice
+                      ? "text-green-500"
+                      : crypto?.current_price < prevPrice
+                      ? "text-red-500"
+                      : ""
+                  }`}
+                >
+                  {crypto?.current_price.toFixed(3)}
+                </td>
+
+                <td
+                  className={`${
+                    crypto?.price_change_percentage_24h > 0
+                      ? "text-green-500"
+                      : crypto?.price_change_percentage_24h < 0
+                      ? "text-red-500"
+                      : ""
+                  }`}
+                >
+                  {crypto?.price_change_percentage_24h.toFixed(3)}%
+                </td>
+                <td>{crypto?.high_24h.toFixed(3)}</td>
+                <td>{crypto?.low_24h.toFixed(3)}</td>
+                <td>$ {formatNumber(crypto?.market_cap)}</td>
+                <td>$ {formatNumber(crypto?.total_volume)}</td>
+                <td>
+                  <button
+                    onClick={(e) => handlePortFolioClick(e, crypto)}
+                    className="text-2xl"
+                  >
+                    {isAdded && isLoggedIn ? <FaStar /> : <CiStar />}
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      {/* Pagination */}
+      {/* Pagination */}
+      <div className="flex justify-between items-center gap-2 mt-4 w-[95%] mx-auto">
+        {/* Previous Button */}
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className={`px-4 py-2 rounded-lg text-lg ${
+            currentPage === 1
+              ? "bg-neutral-700 text-gray-400 cursor-not-allowed"
+              : "bg-orange-600 text-white"
+          }`}
+        >
+          Previous
+        </button>
+
+        {/* Page Numbers */}
+        <div>
+          {Array.from(
+            {
+              length: Math.min(
+                3,
+                Math.ceil(filteredData?.length / rowsPerPage)
+              ),
+            },
+            (_, i) => {
+              const pageNumber = i + 1;
+
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => setCurrentPage(pageNumber)}
+                  className={`px-4 py-2 rounded-full ${
+                    currentPage === pageNumber
+                      ? "bg-orange-500 text-white"
+                      : "bg-neutral-800 text-white"
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              );
+            }
+          )}
+          {currentPage < Math.ceil(filteredData?.length / rowsPerPage) && (
+            <>
+              <span className="text-gray-400">...</span>
+              <button
+                onClick={() =>
+                  setCurrentPage(Math.ceil(filteredData?.length / rowsPerPage))
+                }
+                className="px-3 py-2 rounded-full bg-neutral-800 text-white"
+              >
+                {Math.ceil(filteredData?.length / rowsPerPage)}
+              </button>
+            </>
+          )}
+        </div>
+        {/* Next Button */}
+        <button
+          onClick={() =>
+            setCurrentPage((prev) =>
+              Math.min(prev + 1, Math.ceil(filteredData?.length / rowsPerPage))
+            )
+          }
+          disabled={
+            currentPage === Math.ceil(filteredData?.length / rowsPerPage)
+          }
+          className={`px-4 py-2 rounded-lg text-lg ${
+            currentPage === Math.ceil(filteredData?.length / rowsPerPage)
+              ? "bg-neutral-700 text-gray-400 cursor-not-allowed"
+              : "bg-orange-600 text-white"
+          }`}
+        >
+          Next →
+        </button>
+      </div>
+    </div>
   );
 }
 

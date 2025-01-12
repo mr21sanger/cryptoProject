@@ -13,6 +13,8 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Loading from "../components/Loading";
+import TableContainer from "../components/TableContainer";
+import ProfitBlock from "../components/ProfitBlock";
 
 function HomePage() {
   const { isLoggedIn, user } = useHomeContext();
@@ -48,7 +50,6 @@ function HomePage() {
 
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-
   var settings = {
     dots: false,
     infinite: true,
@@ -68,16 +69,14 @@ function HomePage() {
       },
     ],
   };
-  
 
-
-  const handleLoginClick = ()=>{
-    setShowLoginModal(true)
-  }
+  const handleLoginClick = () => {
+    setShowLoginModal(true);
+  };
 
   return (
     <>
-      <div>
+      <div className="scrollbar-thin">
         {/* HEADER AND NAVBAR */}
         <div>
           {/* <Navbar /> */}
@@ -89,7 +88,10 @@ function HomePage() {
             <div className="h-7 text-center bg-orange-400 bg-opacity-85 border-b-2 border-white font-bold text-black text-lg ">
               <p className="advertise">
                 For better Experience and access Portfolio.{" "}
-                <button onClick={handleLoginClick} className={"text-blue-600 font-bold"}>
+                <button
+                  onClick={handleLoginClick}
+                  className={"text-blue-600 font-bold"}
+                >
                   Login/Signup
                 </button>
               </p>
@@ -106,8 +108,8 @@ function HomePage() {
             </h1>
             <p className="text-lg font-light py-1">
               The Active cryptos in market is{" "}
-              <span className="highlight">14901</span>, with
-              <span class="highlight"> 100%</span> usd Market cap change over
+              <span className="highlight">8,985</span>, with
+              <span class="highlight"> 1.73%</span> usd Market cap change over
               the last day.
             </p>
           </div>
@@ -127,20 +129,27 @@ function HomePage() {
                 ))}
               </Slider>
             ) : (
-              <Loading height={16}/> // Fallback when no data is available
+              <Loading height={16} /> // Fallback when no data is available
             )}
           </div>
 
           {/* TOP THINGS VIEW */}
-          <div className="h-auto  my-16 flex justify-center gap-2 md:gap-6 items-center topView">
+          <div className="h-auto  my-16 flex justify-center w-[98vw] gap-2 md:gap-6 items-center topView">
             {topThings.map((currElem) => {
               return <TopInfoBox info={currElem} />;
             })}
           </div>
 
-          <Table />
+          {/* <Table /> */}
+          <TableContainer />
+
+          <ProfitBlock />
+
           {showLoginModal && (
-            <Modal onclose={() => setShowLoginModal(false)} children={<LoginCont />} />
+            <Modal
+              onclose={() => setShowLoginModal(false)}
+              children={<LoginCont />}
+            />
           )}
         </div>
       </div>

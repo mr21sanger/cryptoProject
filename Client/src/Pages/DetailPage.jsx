@@ -23,7 +23,7 @@ function DetailPage() {
     <>
       <div className="text-white w-full h-auto p-5">
         {/* CONTAINER----1 ******************************************** */}
-        <div className="flex w-full gap-5 items-center">
+        <div className="md:flex w-full gap-5 items-center">
           {" "}
           {/* Corrected className */}
           <DetailContainer1 cryptoData={cryptoData || {}} />

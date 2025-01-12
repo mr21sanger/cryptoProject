@@ -12,16 +12,16 @@ function NavInfoBar() {
             </li>
             <li>
               Exchanges :{" "}
-              <span className="font-medium highlight">764
+              <span className="font-medium highlight">773
               </span>
             </li>
             <li>
               Market Cap :{" "}
-              <span className="font-medium highlight">$3.6T+</span>
+              <span className="font-medium highlight">$3.27T+</span>
             </li>
             <li>
               24h Vol:{" "}
-              <span className="font-medium highlight">$319.32B+</span>
+              <span className="font-medium highlight">$111.24B+</span>
             </li>
           </ul>
         </div>

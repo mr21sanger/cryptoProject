@@ -49,7 +49,7 @@ export const HomeProvider = ({ children }) => {
     if (token) {
       try {
         const header = {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, 
         };
         axios
           .get("http://localhost:3000/api/getUser", { headers: header })

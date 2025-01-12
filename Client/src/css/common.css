@@ -1,5 +1,5 @@
 .highlight {
-  color: rgb(46, 46, 255);
+  color: rgb(78, 78, 255);
 }
 
 /* Table.css */
@@ -23,4 +23,24 @@
 
 .action-button button:hover {
   background-color: #0056b3;
+}
+
+
+/* Tailwind CSS Custom Scrollbar */
+/* Custom Scrollbar */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: #4a90e2;
+  border-radius: 4px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #e0e0e0;
+}
+
+.moreInfoSpan{
+  color: #0056b3;
 }

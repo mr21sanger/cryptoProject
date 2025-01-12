@@ -16,7 +16,7 @@ function PortfolioPage() {
   }, []);
   return (
     <>
-      <div className="w-[90%] mx-auto my-2 py-5  border rounded-xl bg-neutral-900 bg-opacity-80">
+      <div className="w-[90%] h-screen mx-auto my-2 py-5  border rounded-xl bg-neutral-900 bg-opacity-80">
         <div className="w-full h-auto border-b-2">
           <h1 className="font-normal text-4xl my-2 mx-5  w-full">
             My Portfolio
@@ -27,6 +27,7 @@ function PortfolioPage() {
             portfolio.map((currElem) => {
               return <PortfolioBox key={currElem} cryptoData={currElem} />;
             })}
+          
         </div>
       </div>
     </>

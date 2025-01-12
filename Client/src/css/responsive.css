@@ -57,4 +57,16 @@
     margin: 1em 0em;
     font-size: 1rem;
   }
+
+  .tablePageHeading{
+    font-size: 2rem;
+    
+  }
+  .hide{
+    display: none;
+  }
+
+  .centerText{
+    text-align: center;
+  }
 }

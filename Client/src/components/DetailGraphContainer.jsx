@@ -19,8 +19,8 @@ function DetailGraphContainer({ graphData }) {
   }, []);
 
   return (
-    <div className="h-auto bg-black w-[50%] bg-opacity-90">
-      <div className="h-16 mt-8 flex justify-evenly items-center">
+    <div className="h-auto bg-black md:w-[50%] bg-opacity-90">
+      <div className=" md:h-16 mt-8 flex justify-evenly items-center">
         <button
           className={`py-2 px-5 ${
             selectedRange === "7" ? "bg-orange-600" : "bg-orange-800"
